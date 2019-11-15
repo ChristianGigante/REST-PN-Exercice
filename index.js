@@ -72,16 +72,54 @@ app.put("/recipes/:id", (req, res) => {
 
 // Question 4 : As a manager you want to delete one recipe from the recipes list
 // Create a HTTP Request :
+app.delete("/recipes/:id", (req, res) => {
+    //remove item in list by index
+    const index = recipes.findIndex(recipe =>
+        recipe.id == req.params.id
+    )
+    if (index == -1) {
+        res.status(404).send('Recipe to update does not exist!')
+    }
+    const removeItem = (items, i) =>
+        items.slice(0, i - 1).concat(items.slice(i, items.length))
+    let result = removeItem(recipes, index)
 
+    //remove item in list by value
+    // function arrayRemove(arr, value) {
+    //     return arr.filter(function(ele){
+    //         return ele != value;
+    //     });
+    //  }
+    //  var result = arrayRemove(recipes, recipes.find(recipe => recipe.id == req.params.id));
+    res.status(200).send(result)
+})
 
 // Question 5 : As a manager you want to add a new recipe in the recipes list.
 // Create a HTTP Request :
+app.post("/recipes/add", (req, res) => {
+    console.log(req.body); //object = { "id": 4, "name": "Gusto Kite", "ingredients": ["onion", "spaghetti", "beef", "tomato sauce"], "purchasePrice": 30, "sellingPrice": 50 }  
+    let newRecipes = [...recipes, req.body]
+    res.status(200).send(newRecipes)
+})
 
 
 // Question 6 : As a manager you want to get all the recipes which contains a special ingredients. 
 // For example you want to know which recipe contains cheese.
 // Create a HTTP Request :
-
+app.get("/search/:special", (req, res) => {
+    //Work on proccess
+    let special = []
+    recipes.filter(recipe => {
+        for (let index = 0; index < recipe.ingredients.length; index++) {
+            const element = recipe.ingredients[index];
+            if(element == req.body.special){
+                special.push(recipe)
+            }
+        }
+    }
+    )
+    res.status(200).send(special)
+})
 
 // Question 7 : As a manager you want to get all the recipes' name. 
 // For example he want to know which recipe contains cheese.
